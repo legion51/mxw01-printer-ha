@@ -12,22 +12,21 @@ RUN apk add --no-cache \
     jq \
     && rm -rf /var/cache/apk/*
 
-# Create working directory
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Copy package files
 COPY package.json package-lock.json ./
-RUN npm ci --production
+
+# Use npm install instead of npm ci (more forgiving)
+RUN npm install --production
 
 # Copy application files
 COPY server.js ./
 COPY run.sh ./
 COPY public/ ./public/
 
-# Make run script executable
 RUN chmod +x run.sh
 
-# Create non-root user
 RUN addgroup -g 1000 -S nodejs \
     && adduser -S nodejs -u 1000 \
     && chown -R nodejs:nodejs /app
