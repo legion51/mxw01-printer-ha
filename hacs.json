@@ -1,0 +1,16 @@
+﻿{
+  "name": "MXW01 Printer Terminal",
+  "render_readme": true,
+  "homeassistant": "2024.1.0",
+  "zip_release": false,
+  "filename": "addon.zip",
+  "hacs": "1.0.0",
+  "domains": ["mqtt", "http"],
+  "country": ["RU", "UA", "BY", "KZ", "DE"],
+  "iot_class": "Local Polling",
+  "documentation": "https://github.com/legion51/mxw01-printer-ha/blob/main/docs/README.md",
+  "issues": "https://github.com/legion51/mxw01-printer-ha/issues",
+  "dependencies": [],
+  "codeowners": ["@legion51"],
+  "requirements": []
+}

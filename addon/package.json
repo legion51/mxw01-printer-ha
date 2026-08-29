@@ -1,0 +1,19 @@
+﻿{
+  "name": "ha-mxw01-printer",
+  "version": "1.0.0",
+  "description": "Home Assistant addon for MXW01 thermal printer",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "http-proxy-middleware": "^3.0.5",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

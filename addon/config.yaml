@@ -1,0 +1,40 @@
+﻿name: MXW01 Printer Terminal
+version: 1.0.0
+slug: mxw01_printer
+description: >-
+  Web-based terminal for MXW01/Lefuxin thermal printers via Web Bluetooth.
+  Supports Markdown, QR codes, images, and real-time preview.
+arch:
+  - armhf
+  - armv7
+  - aarch64
+  - amd64
+  - i386
+startup: application
+boot: auto
+host_network: true
+host_dbus: true
+privileged: true
+ports:
+  8099/tcp: 8099
+ports_description:
+  8099/tcp: Web interface
+options:
+  server_port: 8099
+  enable_proxy: true
+  cors_allow_origin: "*"
+  debug: false
+schema:
+  server_port: int(1024,65535)
+  enable_proxy: bool
+  cors_allow_origin: str
+  debug: bool
+webui: "http://[HOST]:[PORT:8099]"
+map:
+  - share:rw
+  - ssl:ro
+ingress: true
+ingress_port: 8099
+panel_icon: mdi:printer
+panel_title: MXW01 Printer
+homeassistant: 2024.1.0
