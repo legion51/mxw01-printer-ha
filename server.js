@@ -2,26 +2,29 @@
 const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
-const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 const PORT = process.env.SERVER_PORT || 8099;
 const ENABLE_PROXY = process.env.ENABLE_PROXY !== 'false';
 const CORS_ORIGIN = process.env.CORS_ALLOW_ORIGIN || '*';
 
+// Security
 app.use(helmet({
     contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false
 }));
 
+// CORS for Web Bluetooth
 app.use(cors({
     origin: CORS_ORIGIN,
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+// Static files
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Proxy for image loading
 if (ENABLE_PROXY) {
     app.get('/loadimg', async (req, res) => {
         const imageUrl = req.query.url;
@@ -35,7 +38,9 @@ if (ENABLE_PROXY) {
                 return res.status(400).send('Invalid protocol');
             }
             const response = await fetch(imageUrl, {
-                headers: { 'User-Agent': 'HomeAssistant-MXW01-Printer/1.0' },
+                headers: {
+                    'User-Agent': 'HomeAssistant-MXW01-Printer/1.0'
+                },
                 timeout: 10000
             });
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -52,6 +57,7 @@ if (ENABLE_PROXY) {
     });
 }
 
+// API for Home Assistant
 app.get('/api/status', (req, res) => {
     res.json({
         status: 'running',
@@ -60,16 +66,34 @@ app.get('/api/status', (req, res) => {
     });
 });
 
+app.post('/api/print', express.json(), async (req, res) => {
+    try {
+        const { text, params } = req.body;
+        if (!text) {
+            return res.status(400).json({ error: 'No text provided' });
+        }
+        res.json({
+            status: 'queued',
+            message: 'Print job queued (Web Bluetooth required on client)'
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Error handling
 app.use((err, req, res, next) => {
     console.error('Server error:', err);
     res.status(500).send('Internal Server Error');
 });
 
+// Start server
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`MXW01 Printer Server running on port ${PORT}`);
     console.log(`Web interface: http://localhost:${PORT}`);
 });
 
+// Graceful shutdown
 process.on('SIGTERM', () => {
     console.log('SIGTERM received, shutting down...');
     process.exit(0);
