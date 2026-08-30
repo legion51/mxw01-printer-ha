@@ -1,5 +1,5 @@
 name: MXW01 Bluetooth Printer
-version: "0.2.1"
+version: "0.2.2"
 slug: mxw01_printer
 description: Print Markdown, QR codes and remote images on an MXW01 Bluetooth thermal printer.
 url: https://github.com/legion51/mxw01-printer-ha
