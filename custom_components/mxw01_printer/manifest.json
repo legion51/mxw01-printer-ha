@@ -1,8 +1,9 @@
 {
   "domain": "mxw01_printer",
   "name": "MXW01 Bluetooth Printer",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "documentation": "https://github.com/legion51/mxw01-printer-ha",
+  "issue_tracker": "https://github.com/legion51/mxw01-printer-ha/issues",
   "requirements": [],
   "dependencies": [],
   "codeowners": [],

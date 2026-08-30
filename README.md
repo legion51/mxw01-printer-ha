@@ -11,6 +11,24 @@
 
 Никаких файлов в `/config/custom_components` копировать не требуется для работы интерфейса и печати.
 
+## Печать из автоматизаций
+
+Для действия в автоматизации сначала загрузите в GitHub весь архив, включая корневой `hacs.json`, и создайте новый commit (или GitHub Release). Затем в **HACS → Integrations** добавьте URL этого же репозитория, выберите свежую версию и установите его. Перезапустите Home Assistant, после чего добавьте интеграцию **MXW01 Bluetooth Printer** в **Settings → Devices & services**. Если add-on установлен из локального репозитория, оставьте адрес `http://local-mxw01-printer:8099`. Для GitHub-репозитория укажите внутреннее имя add-on в формате `<ID-репозитория>-mxw01-printer`; его можно посмотреть в данных add-on Supervisor.
+
+После этого в автоматизациях доступно действие `mxw01_printer.print`. Оно использует те же отдельные поля, что и веб-интерфейс:
+
+```yaml
+actions:
+  - action: mxw01_printer.print
+    data:
+      title: Открыта дверь
+      text: "{{ now().strftime('%d.%m.%Y %H:%M') }}"
+      centered: true
+      separator: true
+      qr_data: https://my.home-assistant.io
+      qr_size: 4
+```
+
 Add-on рассчитан на Home Assistant OS/Supervised. Обычный Home Assistant Container не предоставляет Supervisor, поэтому add-on там не устанавливается; мост следует запускать отдельным контейнером с доступом к системному D-Bus/BlueZ.
 
 ## Интерфейс
