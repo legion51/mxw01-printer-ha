@@ -1,7 +1,7 @@
 ARG BUILD_FROM
 FROM ${BUILD_FROM}
 
-RUN apk add --no-cache bluez-libs font-dejavu \
+RUN apk add --no-cache bluez bluez-libs font-dejavu \
     && pip install --no-cache-dir \
       "bleak>=0.22,<1" \
       "fastapi>=0.115,<1" \

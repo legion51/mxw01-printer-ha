@@ -1,40 +1,24 @@
 # MXW01 Bluetooth Printer для Home Assistant
 
-Репозиторий содержит два компонента:
-
-- `mxw01_printer` — Home Assistant add-on, который получает задания, рендерит их в 384-точечный монохромный растр и передаёт по Bluetooth протоколу MXW01 (AE01/AE03);
-- `custom_components/mxw01_printer` — custom integration, добавляющая действие `mxw01_printer.print` для автоматизаций и панели Developer Tools.
+Один самостоятельный Home Assistant add-on для Bluetooth-принтера MXW01. После установки из этого репозитория пользователь сразу получает русскоязычную веб-страницу: поиск принтера, сохранение адреса, редактор чека, предпросмотр и печать.
 
 ## Установка
 
-1. Создайте GitHub-репозиторий и загрузите в него содержимое этой папки. Перед публикацией замените URL `your-github-user` в `repository.yaml`, `config.yaml` и `manifest.json`.
+1. Создайте GitHub-репозиторий и загрузите в него содержимое этой папки. Перед публикацией замените URL `your-github-user` в `repository.yaml` и `mxw01_printer/config.yaml`.
 2. В Home Assistant OS откройте **Settings → Add-ons → Add-on Store → ⋮ → Repositories**, добавьте URL репозитория и установите **MXW01 Bluetooth Printer**.
-3. В настройках add-on укажите Bluetooth-адрес принтера. Его можно узнать в логах Home Assistant/BlueZ или оставить пустым: мост выполнит сканирование по имени `MXW01` перед первой печатью.
-4. Запустите add-on. Home Assistant должен иметь доступ к Bluetooth-адаптеру, а принтер быть включён и не занят приложением телефона.
-5. Скопируйте каталог `custom_components/mxw01_printer` в `/config/custom_components/mxw01_printer/`, перезапустите Home Assistant и добавьте интеграцию **MXW01 Bluetooth Printer** в **Settings → Devices & services**. Оставьте адрес моста по умолчанию: `http://mxw01_printer:8099`.
+3. Запустите add-on и откройте **Open Web UI**. Нажмите «Найти», выберите принтер и сохраните настройки.
+4. Введите макет, проверьте предпросмотр и нажмите «Напечатать». Home Assistant должен иметь доступ к Bluetooth-адаптеру, а принтер быть включён и не занят приложением телефона.
+
+Никаких файлов в `/config/custom_components` копировать не требуется для работы интерфейса и печати.
 
 Add-on рассчитан на Home Assistant OS/Supervised. Обычный Home Assistant Container не предоставляет Supervisor, поэтому add-on там не устанавливается; мост следует запускать отдельным контейнером с доступом к системному D-Bus/BlueZ.
 
-## Пример автоматизации
+## Интерфейс
 
-```yaml
-alias: Напечатать уведомление
-triggers:
-  - trigger: state
-    entity_id: binary_sensor.door
-    to: "on"
-actions:
-  - action: mxw01_printer.print
-    data:
-      markdown: |
-        # Открыта дверь
-        [C]{{ now().strftime('%d.%m.%Y %H:%M') }}
-        ---
-        [QR:https://my.home-assistant.io|4]
-      font_size: 20
-      qr_size: 4
-mode: single
-```
+- Статус Bluetooth-подключения и поиск принтера;
+- сохранение адреса в данных add-on;
+- редактор, предпросмотр реального 384-пиксельного чека;
+- печать и понятные сообщения об ошибках.
 
 ## Поддерживаемая разметка
 
@@ -50,7 +34,7 @@ mode: single
 
 ## Проверка связи
 
-После запуска ingress-страница add-on показывает JSON со статусом. Для диагностики можно открыть `GET /scan` через ingress — ответ содержит найденные устройства с именем, включающим `MXW01`.
+Откройте **Log** add-on, если поиск или печать завершились ошибкой. Пакет `bluez` включён в образ, поэтому предупреждение о недоступном `bluetoothctl` исчезнет после пересборки add-on.
 
 ## Лицензия
 
