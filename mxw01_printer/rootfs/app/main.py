@@ -139,8 +139,11 @@ UI = r'''<!doctype html>
 <section class="card"><h2>Принтер</h2><label>Имя при поиске<input id="name" value="MXW01"></label><div class="row"><label>Bluetooth-адрес<select id="address"><option value="">Выберите через поиск</option></select></label><button onclick="scan()">Найти</button></div><div class="buttons"><button onclick="save()">Сохранить принтер</button></div><p class="hint">Адрес сохраняется в данных add-on и восстанавливается после перезапуска.</p><h2>Предпросмотр</h2><img id="preview" alt="Здесь появится макет печати"><p class="hint">Всё готово к печати после появления статуса «подключён».</p></section></div></main>
 <script>
 const $=id=>document.getElementById(id);let settings={};
+// Home Assistant Ingress mounts this page below /api/hassio_ingress/<token>/.
+// Keep that prefix for every request instead of incorrectly calling HA's /api.
+const API_BASE=window.location.pathname+(window.location.pathname.endsWith('/')?'':'/')+'api/';
 function payload(){return{markdown:$('markdown').value,font_size:+$('font').value,qr_size:+$('qr').value,image_scale:+$('scale').value}}
-async function api(path,opt={}){let r=await fetch('/api/'+path,opt);if(!r.ok){let x=await r.json().catch(()=>({}));throw Error(x.detail||'Ошибка '+r.status)}return r}
+async function api(path,opt={}){let r=await fetch(API_BASE+path,opt);if(!r.ok){let x=await r.json().catch(()=>({}));throw Error(x.detail||'Ошибка '+r.status)}return r}
 async function refresh(){try{let s=await (await api('status')).json();$('state').textContent=s.connected?'подключён':'не подключён';$('state').className='status '+(s.connected?'on':'')}catch(e){$('state').textContent='нет связи'}}
 async function load(){settings=await (await api('settings')).json();$('name').value=settings.device_name;let a=$('address');if(settings.device_address)a.add(new Option(settings.device_address,settings.device_address,true,true));refresh()}
 async function scan(){try{$('message').textContent='Ищу принтеры…';let d=await (await api('scan')).json(),a=$('address');a.innerHTML='<option value="">Выберите через поиск</option>';d.forEach(x=>a.add(new Option(x.name+' — '+x.address,x.address)));$('message').textContent=d.length?'Выберите найденный принтер.':'MXW01 не найден. Проверьте питание и Bluetooth.'}catch(e){$('message').textContent=e.message}}
