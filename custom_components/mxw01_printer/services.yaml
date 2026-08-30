@@ -1,0 +1,50 @@
+print:
+  name: Напечатать
+  description: Отправляет чек, QR-код или изображение в установленный add-on MXW01.
+  fields:
+    title:
+      name: Заголовок
+      selector:
+        text:
+    text:
+      name: Текст
+      selector:
+        text:
+          multiline: true
+    centered:
+      name: Центрировать текст
+      selector:
+        boolean:
+    separator:
+      name: Добавить разделительную линию
+      selector:
+        boolean:
+    qr_data:
+      name: Данные QR-кода
+      selector:
+        text:
+    image_url:
+      name: URL изображения
+      selector:
+        text:
+    font_size:
+      name: Размер шрифта
+      selector:
+        number:
+          min: 10
+          max: 40
+          mode: slider
+    qr_size:
+      name: Размер QR-кода
+      selector:
+        number:
+          min: 1
+          max: 10
+          mode: slider
+    image_scale:
+      name: Масштаб изображения, %
+      selector:
+        number:
+          min: 20
+          max: 200
+          mode: slider

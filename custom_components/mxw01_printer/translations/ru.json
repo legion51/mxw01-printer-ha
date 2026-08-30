@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "MXW01 Bluetooth Printer",
+        "description": "Укажите адрес работающего add-on MXW01.",
+        "data": {
+          "bridge_url": "Адрес add-on"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Интеграция уже настроена"
+    }
+  },
+  "services": {
+    "print": {
+      "name": "Напечатать",
+      "description": "Отправить задание в add-on MXW01"
+    }
+  }
+}
