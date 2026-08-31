@@ -1,6 +1,8 @@
 """Home Assistant service action for the MXW01 add-on."""
 from __future__ import annotations
 
+import asyncio
+from aiohttp import ClientError
 import voluptuous as vol
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.exceptions import HomeAssistantError
@@ -47,10 +49,17 @@ async def async_setup_entry(hass: HomeAssistant, entry) -> bool:
         bridge_url = next(iter(hass.data[DOMAIN].values()))
         body = dict(call.data)
         body["markdown"] = _make_markup(body)
-        async with async_get_clientsession(hass).post(f"{bridge_url}/api/print", json=body, timeout=90) as response:
-            if response.status >= 400:
-                message = await response.json(content_type=None)
-                raise HomeAssistantError(message.get("detail", f"Ошибка add-on: HTTP {response.status}"))
+        try:
+            async with async_get_clientsession(hass).post(f"{bridge_url}/api/print", json=body, timeout=90) as response:
+                if response.status >= 400:
+                    message = await response.json(content_type=None)
+                    raise HomeAssistantError(message.get("detail", f"Ошибка add-on: HTTP {response.status}"))
+        except (ClientError, asyncio.TimeoutError) as error:
+            raise HomeAssistantError(
+                f"Не удалось связаться с add-on по адресу {bridge_url}. "
+                "Откройте Web UI add-on, скопируйте «Адрес для integration» и "
+                "создайте integration заново с этим адресом."
+            ) from error
 
     if not hass.services.has_service(DOMAIN, SERVICE_PRINT):
         hass.services.async_register(DOMAIN, SERVICE_PRINT, async_print, schema=SERVICE_SCHEMA)
