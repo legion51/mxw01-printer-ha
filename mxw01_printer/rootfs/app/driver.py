@@ -69,6 +69,12 @@ class MXW01Driver:
             if offset % 400 == 0:
                 await asyncio.sleep(0.02)
         await self._command(0xAD, b"\x00")
+        
+    async def get_status(self) -> None:
+        """Send the documented A1 status request without printing or feeding paper."""
+        if not self.connected:
+            raise RuntimeError("Printer is not connected")
+        await self._command(0xA1, b"\x00")
 
     async def disconnect(self) -> None:
         if self.client and self.client.is_connected:
